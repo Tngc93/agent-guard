@@ -1,0 +1,15 @@
+{
+  "name": "agent-guard",
+  "description": "Safety hooks for AI coding agents",
+  "owner": {
+    "name": "Berk Arcak",
+    "url": "https://github.com/Tngc93"
+  },
+  "plugins": [
+    {
+      "name": "agent-guard",
+      "source": "./",
+      "description": "Blocks destructive shell commands, secret leaks and self-disabling edits before Claude Code runs them."
+    }
+  ]
+}

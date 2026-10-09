@@ -1,0 +1,6 @@
+{
+  "name": "agent-guard",
+  "version": "0.1.0",
+  "description": "Guard rails for Codex: blocks destructive shell commands, secret leaks and self-disabling edits before they run.",
+  "hooks": "./hooks/hooks.json"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "agent-guard",
+  "version": "0.1.0",
+  "description": "Guard rails for Claude Code: blocks destructive shell commands, secret leaks and self-disabling edits before they run.",
+  "author": {
+    "name": "Berk Arcak",
+    "url": "https://github.com/Tngc93"
+  },
+  "homepage": "https://github.com/Tngc93/agent-guard",
+  "repository": "https://github.com/Tngc93/agent-guard",
+  "license": "MIT",
+  "keywords": ["security", "hooks", "guardrails", "secrets", "safety"]
+}
