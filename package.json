@@ -1,0 +1,47 @@
+{
+  "name": "agent-guard",
+  "version": "0.1.0",
+  "description": "Guard rails for AI coding agents: blocks destructive shell commands, secret leaks and self-disabling edits before Claude Code or Codex runs them.",
+  "type": "module",
+  "bin": {
+    "agent-guard": "bin/agent-guard.mjs"
+  },
+  "files": [
+    "bin",
+    "src",
+    "hooks",
+    ".claude-plugin",
+    ".codex-plugin",
+    "examples",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=18.17"
+  },
+  "scripts": {
+    "test": "node --test",
+    "lint:plugin": "claude plugin validate .",
+    "check": "node bin/agent-guard.mjs check"
+  },
+  "keywords": [
+    "claude-code",
+    "codex",
+    "ai-agents",
+    "hooks",
+    "security",
+    "guardrails",
+    "secrets",
+    "pretooluse"
+  ],
+  "author": "Berk Arcak (https://github.com/Tngc93)",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Tngc93/agent-guard.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Tngc93/agent-guard/issues"
+  },
+  "homepage": "https://github.com/Tngc93/agent-guard#readme"
+}

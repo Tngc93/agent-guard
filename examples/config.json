@@ -1,0 +1,31 @@
+{
+  "$comment": "User-level config: ~/.config/agent-guard/config.json. Every key is optional.",
+
+  "mode": "enforce",
+
+  "protectedBranches": ["main", "master", "production", "release/*", "staging"],
+
+  "disable": ["release.deploy-production"],
+
+  "overrides": {
+    "release.publish": "deny",
+    "git.discard-work": "ask"
+  },
+
+  "allow": ["^rm -rf \\./tmp-fixtures(/\\*)?$"],
+
+  "deny": [
+    { "pattern": "\\bkubectl\\b.*--context[= ]prod", "reason": "Agents must not touch the production cluster." }
+  ],
+
+  "ask": [
+    { "pattern": "^make (deploy|release)\\b", "reason": "Make targets that deploy need a human." }
+  ],
+
+  "protectedPaths": ["migrations/**", "infra/**/*.tf"],
+
+  "codexAskBehavior": "deny",
+  "auditLog": true,
+  "failClosed": false,
+  "trustProjectConfig": false
+}

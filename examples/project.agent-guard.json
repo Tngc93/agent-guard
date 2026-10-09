@@ -1,0 +1,12 @@
+{
+  "$comment": "Project-level config: <repo>/.agent-guard.json. Unless your user config sets trustProjectConfig, this file can only make the policy stricter.",
+
+  "protectedBranches": ["develop"],
+  "protectedPaths": ["db/migrations/**", ".github/workflows/**"],
+  "deny": [
+    { "pattern": "\\bnpm run db:seed:prod\\b", "reason": "Seeding production is a human-only task in this repo." }
+  ],
+  "overrides": {
+    "release.publish": "deny"
+  }
+}
