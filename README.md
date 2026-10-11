@@ -8,6 +8,11 @@ English | [Türkçe](README.tr.md)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 ![Dependencies: 0](https://img.shields.io/badge/dependencies-0-blue)
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/how-it-works-dark.svg">
+  <img src="docs/assets/how-it-works-light.svg" alt="Animated diagram: an AI agent's tool call goes through the agent-guard hook, a shell parser, the rule engine and a secret scanner, and ends as allow, ask or deny" width="100%">
+</picture>
+
 ```text
 $ agent-guard check "git push --force origin main"
 DENY  git push --force origin main
@@ -46,6 +51,34 @@ Agents run commands with your permissions. Built-in permission rules match comma
 | **Self-protection** | Editing `.git/` internals, writing to `/usr`, `/bin`, `/System` | Editing agent-guard config, agent hook settings, shell startup files, `~/.ssh/authorized_keys`, `.git/hooks` |
 
 Run `agent-guard rules` for the full list of rule ids.
+
+## How it works
+
+Every tool call passes through one short-lived Node process. Nothing is sent over the network.
+
+```mermaid
+flowchart LR
+  agent["Claude Code / Codex<br/>wants to run a tool"] -- "PreToolUse JSON<br/>on stdin" --> hook["agent-guard hook<br/>bin/agent-guard.mjs"]
+  hook --> engine["Policy engine<br/>src/engine.mjs"]
+
+  subgraph checks["Checks"]
+    direction TB
+    shell["Shell lexer<br/>quotes · pipes · &&, $(…) · heredocs<br/>unwraps sudo · env · xargs · bash -c"]
+    bash["Shell rules<br/>files · disks · git · gh · db · infra · release"]
+    files["File rules<br/>Write · Edit · Read · apply_patch"]
+    secrets["Secret scanner<br/>provider keys · PEM blocks · DB URLs"]
+  end
+
+  config["Policy<br/>user config + project .agent-guard.json<br/>(a project may only tighten it)"] --> engine
+  engine -- "Bash" --> shell --> bash
+  engine -- "file tools" --> files
+  bash & files --> secrets
+  engine --> decision{"decision"}
+  decision -- "allow" --> silent["exit 0, no output"]
+  decision -- "ask" --> ask["ask the user<br/>(Codex: deny with instructions)"]
+  decision -- "deny" --> deny["deny + reason<br/>back to the agent"]
+  ask & deny --> audit["Audit log (JSONL)<br/>secrets redacted"]
+```
 
 ## Install
 
