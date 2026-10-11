@@ -32,12 +32,12 @@ Ajanlar komutları sizin yetkilerinizle çalıştırır. Yerleşik izin kurallar
 Her araç çağrısı kısa ömürlü tek bir Node sürecinden geçer. Ağa hiçbir şey gönderilmez.
 
 ```mermaid
-flowchart LR
+flowchart TB
   agent["Claude Code / Codex<br/>bir araç çalıştırmak istiyor"] -- "PreToolUse JSON<br/>stdin üzerinden" --> hook["agent-guard hook<br/>bin/agent-guard.mjs"]
   hook --> engine["Politika motoru<br/>src/engine.mjs"]
 
   subgraph checks["Kontroller"]
-    direction TB
+    direction LR
     shell["Shell ayrıştırıcı<br/>tırnaklar · pipe · &&, $(…) · heredoc<br/>sudo · env · xargs · bash -c açılır"]
     bash["Shell kuralları<br/>dosya · disk · git · gh · db · altyapı · yayın"]
     files["Dosya kuralları<br/>Write · Edit · Read · apply_patch"]

@@ -57,12 +57,12 @@ Run `agent-guard rules` for the full list of rule ids.
 Every tool call passes through one short-lived Node process. Nothing is sent over the network.
 
 ```mermaid
-flowchart LR
+flowchart TB
   agent["Claude Code / Codex<br/>wants to run a tool"] -- "PreToolUse JSON<br/>on stdin" --> hook["agent-guard hook<br/>bin/agent-guard.mjs"]
   hook --> engine["Policy engine<br/>src/engine.mjs"]
 
   subgraph checks["Checks"]
-    direction TB
+    direction LR
     shell["Shell lexer<br/>quotes · pipes · &&, $(…) · heredocs<br/>unwraps sudo · env · xargs · bash -c"]
     bash["Shell rules<br/>files · disks · git · gh · db · infra · release"]
     files["File rules<br/>Write · Edit · Read · apply_patch"]
