@@ -4,6 +4,11 @@
 
 [English](README.md) | Türkçe
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/how-it-works-dark.svg">
+  <img src="docs/assets/how-it-works-light.svg" alt="Animasyonlu diyagram: bir AI ajanının araç çağrısı agent-guard hook'undan, shell ayrıştırıcıdan, kural motorundan ve secret tarayıcıdan geçer; sonuç izin, onay ya da engel olur" width="100%">
+</picture>
+
 ```text
 $ agent-guard check "git push --force origin main"
 DENY  git push --force origin main
@@ -21,6 +26,34 @@ Ajanlar komutları sizin yetkilerinizle çalıştırır. Yerleşik izin kurallar
 - **Gürültü düşük.** Günlük geliştirme komutları serbest: `rm -rf node_modules`, `git push origin feature/x`, `cp .env.example .env`, `prisma migrate dev`.
 - **Kurcalamaya dayanıklı.** Ajan, korumayı kapatmak için `.agent-guard.json`, `.claude/settings.json` veya `.codex/hooks.json` dosyalarını sessizce düzenleyemez. Klonladığınız bir repo da politikanızı gevşetemez.
 - **Yerel ve hızlı.** Sıfır bağımlılık, ağ çağrısı yok. Bir kontrol bir milisaniyenin çok altında sürer.
+
+## Nasıl çalışır
+
+Her araç çağrısı kısa ömürlü tek bir Node sürecinden geçer. Ağa hiçbir şey gönderilmez.
+
+```mermaid
+flowchart TB
+  agent["Claude Code / Codex<br/>bir araç çalıştırmak istiyor"] -- "PreToolUse JSON<br/>stdin üzerinden" --> hook["agent-guard hook<br/>bin/agent-guard.mjs"]
+  hook --> engine["Politika motoru<br/>src/engine.mjs"]
+
+  subgraph checks["Kontroller"]
+    direction LR
+    shell["Shell ayrıştırıcı<br/>tırnaklar · pipe · &&, $(…) · heredoc<br/>sudo · env · xargs · bash -c açılır"]
+    bash["Shell kuralları<br/>dosya · disk · git · gh · db · altyapı · yayın"]
+    files["Dosya kuralları<br/>Write · Edit · Read · apply_patch"]
+    secrets["Secret tarayıcı<br/>sağlayıcı anahtarları · PEM · DB URL"]
+  end
+
+  config["Politika<br/>kullanıcı ayarı + proje .agent-guard.json<br/>(proje yalnızca sıkılaştırabilir)"] --> engine
+  engine -- "Bash" --> shell --> bash
+  engine -- "dosya araçları" --> files
+  bash & files --> secrets
+  engine --> decision{"karar"}
+  decision -- "allow" --> silent["exit 0, çıktı yok"]
+  decision -- "ask" --> ask["kullanıcıya sor<br/>(Codex: talimatla deny)"]
+  decision -- "deny" --> deny["deny + gerekçe<br/>ajana geri döner"]
+  ask & deny --> audit["Denetim kaydı (JSONL)<br/>secret'lar maskelenir"]
+```
 
 ## Kurulum
 
